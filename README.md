@@ -1,2 +1,2 @@
-# StatInfer_PeerAssignment
+# StatInfer_PeerAssessment
 Statistical Inference course project - peer-graded assignment

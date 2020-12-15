@@ -1,0 +1,103 @@
+---
+title: "Statistical Inference Course Project"
+author: "robertwcw"
+date: "12/13/2020"
+output: 
+  html_document: 
+    fig_caption: yes
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# Sys.setenv(TZ = "UTC")      # set global TZ to UTC for POSIXt class
+
+.Rfliburl <- "https://raw.githubusercontent.com/robertwcw/Rflib/master"
+source(file.path(.Rfliburl,"getRflib.R"),local = TRUE)
+source(getRflib("is.defined.R"),local = TRUE)
+source(getRflib("myplclust.R"),local = TRUE)
+source(getRflib("strCap.R"),local = TRUE)
+```
+
+```{r init.local}
+if (!requireNamespace("ggplot2",quietly = TRUE)) install.packages("ggplot2")
+library(ggplot2)
+
+par.def <- par(no.readonly = TRUE) 
+```
+&nbsp;
+
+### Synopsis
+
+This course work embarks on the objective to help us to understand how bootstrapping is useful in statistical inference studies (sampling, confidence interval and hypothesis testing etc...) when the real-world data size is constrained by inevitable factors such as budget, time-limit and manpower etc.  Together with Central Limit Theorem (CLT), our confidence is further enhanced how precise the sample data closely resemble the larger population data.
+
+CLT states that a sampling distribution of the mean for a variable, of sufficiently large sample size will approximate normal distribution regardless of the variable's distribution in the population, with the sampling means approaching the population mean. In other words, when the simulated sampling means of a bootstrapped sample distribution converges around the population mean, we can deduce that the sample distributions are representative of the larger population distribution.
+&nbsp;
+
+```{r stat.simul}
+# statistical simulation
+
+n <- 40                 #sample size
+B <- 1000               #bootstrap size
+lambda <- 1/5           #observed rate of population
+mu <- 1/lambda          #mean of population
+siqma <- 1/lambda       #std-deviation of population
+alpha <- 0.05           #alpha level for confidence interval test
+
+# generate 1000 simulated distribution of 40 random exponential per sample
+z <- matrix(nrow = B, ncol = n) 
+for (i in 1:B) {z[i,] <- rexp(n, lambda)}; rm(i)
+
+e <- NULL
+e <- cbind(rexp(n*25, lambda), # 1000 sample random exponential distributed data
+           apply(z, 1, mean))  # 1000 simulated means of each sample of 40 random exponential distributed data
+e <- as.data.frame(e)
+colnames(e) <- c("X_e", "X_mu")
+```
+
+
+```{r plot.simul}
+# plot graph for the simulated data
+par(mfrow = c(1,2))
+
+# boxplot for exponential distributed random sample data 'X_e'
+b <- ggplot()
+b + geom_boxplot(data = e, mapping = aes(x = X_e), 
+                 outlier.colour = "darkorange",
+                 size = 0.5,
+                 varwidth = FALSE)
+
+# histogram for exponential distributed sample data 'X_e'
+h <- ggplot(data = e, mapping = aes(x = X_e, y = ..density..)) 
+h + geom_histogram(color = "black", fill = "white", binwidth = n/30) + 
+    geom_density(alpha = 0.3, fill = "#FF6666", col = "red") +
+    geom_vline(aes(xintercept = mean(x = X_e)), lty = 2, lwd = 0.6, col = "blue")
+
+# boxplot for bootstrapped mean of random exponential sample data 'X_mu'
+b <- ggplot()
+b + geom_boxplot(data = e, mapping = aes(x = X_mu), 
+                 outlier.colour = "darkorange",
+                 size = 0.5,
+                 varwidth = FALSE)
+
+# histogram for bootstrapped of 1000 mean of random exponential sample data 'X_mu'
+h <- ggplot(data = e, mapping = aes(x = X_mu, y = ..density..)) 
+h + geom_histogram(color = "black", fill = "white", bins = n) + 
+    geom_density(alpha = 0.3, fill = "#FF6666", col = "red") + 
+    geom_vline(aes(xintercept = mean(x = X_mu)), lty = 2, lwd = 0.6, col = "blue")
+
+
+# t-test
+CI_t <- mean(e$X_mu) + c(-1,1) * qt(1-alpha/2,NROW(e$X_mu)-1) * (sd(e$X_mu)/sqrt(length(e$X_mu)))
+t_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
+p_val <- pt(q = abs(t_val), df = length(e$X_mu)-1, lower.tail=FALSE)*2
+
+# z-test
+CI_z <- mean(e$X_mu) + c(-1,1)*qnorm(1-alpha/2)*(sd(e$X_mu)/sqrt(length(e$X_mu)))
+z_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
+p_val <- pnorm(abs(z_val), lower.tail = FALSE)*2
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

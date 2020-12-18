@@ -106,7 +106,7 @@ The shape formation of boxplot graph for dataset $X_\mu$ in Figure-1 suggests th
 # histogram for bootstrapped of 1000 mean of random exponential sample data 'X_mu'
 h <- ggplot(data = e, mapping = aes(x = X_mu, y = ..density..)) 
 h <- h + geom_histogram(color = "black", fill = "white", bins = n) +
-        geom_density(alpha = 0.3, fill = "#FF6666", col = "red") +
+        geom_density(alpha = 0.5, fill = "#FF6666", col = "red") +
         geom_vline(aes(xintercept = mean(x = X_mu)), lty = 1, lwd = 1, col = "blue") +
         geom_vline(aes(xintercept = mu), lty = 2, lwd = 0.8, col = "green") +
         labs(x = expression("X"[mu]), caption = "Figure-2")
@@ -140,53 +140,36 @@ $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 5)`
 
 $p.value =$ `r round(p_val, 5)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~**, which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X}$ represents the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 5)` & upper = `r round(CI_t[2], 5)`) tightly wrapping around the theoretical mean $\mu$ indicates the sample mean $\bar{X}$ will occur very closely to the $\mu$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X}$ is estimating what it was intended to measure.
 
-Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ tells us if the $\bar{X}$ will fall on the left or right of the $\mu$.  
+Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ tells us if the $\bar{X}$ will less than or greater than $\mu$.  
 
+Though Central Limit Theorem (CLT) states that the distribution of a statistic will become more normal when the number of sampling data is sufficiently large. Let us take a look at the dataset $X_e$ consisting of 1000 random exponential, and how the data in $X_e$ are distributed.  
 
-
-
-Summary of $X_e$ simulated random exponential dataset   
+5-Number Summary of $X_e$     
 ```{r Xe.summa}
 summary(e$X_e)
 ```
-$X_e$ mean $\mu$ is round(mean(e$X_e), 5) 
-$\lambda$ 
-
-
-```{r plot.hist.Xe}
-# plot graph for the simulated data
-
-# histogram for exponential distributed sample data 'X_e'
-h <- ggplot(data = e, mapping = aes(x = X_e, y = ..density..)) 
-h + geom_histogram(color = "black", fill = "white", binwidth = n/30) + 
-    geom_density(alpha = 0.3, fill = "#FF6666", col = "red") +
-    geom_vline(aes(xintercept = mean(x = X_e)), lty = 1, lwd = 0.6, col = "blue") +
-    geom_vline(aes(xintercept = mu), lty = 2, lwd = 0.6, col = "green") +
-    xlab(expression("X"[e]))
-
-
+&nbsp;
+```{r plot.Xe.boxplot}
 # boxplot for exponential distributed random sample data 'X_e'
 b <- ggplot()
 b <- b + geom_boxplot(data = e, mapping = aes(x = X_e), 
                       outlier.colour = "darkorange",
                       size = 0.5,
-                      arwidth = FALSE)
-b <- b + labs(x = expression("X"[e]))
+                      varwidth = FALSE)
+b <- b + labs(x = expression("X"[e]), caption = "Figure-3")
 print(b)
-
-
-
-
-
-# t-test
-CI_t <- mean(e$X_mu) + c(-1,1) * qt(1-alpha/2,NROW(e$X_mu)-1) * (sd(e$X_mu)/sqrt(length(e$X_mu)))
-t_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
-p_val <- pt(q = abs(t_val), df = length(e$X_mu)-1, lower.tail=FALSE)*2
-
-# z-test
-CI_z <- mean(e$X_mu) + c(-1,1)*qnorm(1-alpha/2)*(sd(e$X_mu)/sqrt(length(e$X_mu)))
-z_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
-p_val <- pnorm(abs(z_val), lower.tail = FALSE)*2
+```
+&nbsp;
+```{r plot.Xe.hist}
+# histogram for 1000 random exponential sample data 'X_e'
+h <- ggplot(data = e, mapping = aes(x = X_e, y = ..density..)) 
+h <- h + 
+    geom_histogram(color = "black", fill = "white", bins = n) +
+    geom_density(alpha = 0.5, fill = "#FF6666", col = "red") +
+    geom_vline(aes(xintercept = mean(x = X_e)), lty = 1, lwd = 1, col = "blue") +
+    geom_vline(aes(xintercept = mu), lty = 2, lwd = 0.8, col = "green") +
+    labs(x = expression("X"[e]), caption = "Figure-4")
+print(h)
 
 ```
 

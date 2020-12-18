@@ -29,9 +29,9 @@ par.def <- par(no.readonly = TRUE)
 
 ### Synopsis
 
-This course work embarks on the objective to help us understand how simulation and Central Limit Theorem (CLT) are useful in statistical inference studies (resampling, confidence interval and hypothesis testing etc...) when the real-world data isn't readily available or ideal size of population data is constrained by the inevitable factors such as budget, time-limit and manpower etc. 
+This course work embarks on the objective to help us understand how simulation and Central Limit Theorem (CLT) are useful in statistical inference studies (resampling, confidence interval and hypothesis testing etc...) when real-world data isn't readily available or an ideal size of sampling data is constrained by the inevitable factors such as budget, time-limit and manpower etc. 
 
-Simulation is handy for pumping up the sampling data size to enable a more normal distribution approach for statistical analysis. While CLT states that a sampling distribution of the statistic estimates for a variable, of sufficiently large sample size will approximate normal distribution regardless of the variable's distribution in the population, with the sampling estimates converging around the population estimates. In other words, when the simulated sampling means of a bootstrapped sample distribution converges around the population mean, we can deduce that the sample distributions are representative of the larger population distribution.
+Simulation is handy for pumping up the sampling data size to enable a more normal distribution approach for statistical analysis, while CLT states that a sampling distribution of the statistic estimates for a variable, of sufficiently large sample size will approximate normal distribution regardless of the variable's distribution in the population, with the sampling estimates converging around the population estimates. 
 &nbsp;
 
 ### Statistical Simulation
@@ -48,7 +48,7 @@ Specification of the dataset used in this demonstration, as follows:
 | $\mu = \frac {1} {\lambda}$ | Theoretical mean |  
 | $\sigma  = \frac {1} {\lambda}$ | Theoretical standard deviation |  
 | $X_e$ | Simulated dataset of 1000 random exponential |  
-| $X_\mu$ |Simulated dataset of 1000 sample means of 40 random exponential per sample |
+| $X_\mu$ | Simulated dataset of 1000 sample means of 40 random exponential per sample |
 &nbsp;
 
 ```{r stat.simul, echo=TRUE}
@@ -58,7 +58,7 @@ n <- 40                 #number of exponential per sample
 B <- 1000               #number of simulation 
 lambda <- 1/5           #rate value for random exponential function
 mu <- 1/lambda          #theoretical mean of population
-siqma <- 1/lambda       #theoretical std-deviation of population
+sigma <- 1/lambda       #theoretical std-deviation of population
 alpha <- 1/20           #alpha level for confidence interval test
 
 # generate 1000 simulated distribution of 40 random exponential per sample
@@ -81,10 +81,10 @@ summary(e$X_mu)
 
 | Statistics Estimates of $X_\mu$ |
 |------------------------|---------------------------------------------------|
-| $\bar{X}$ = `r round(mean(e$X_mu), 5)` | Mean of $X_\mu$ |  
-| $\sigma_{X_\mu}$ = `r round(sd(e$X_mu), 5)` | Standard Deviation of $X_\mu$ |  
-| $\sigma_{X_\mu}^2$ = `r round(var(e$X_mu), 5)` | Variance of $X_\mu$ |  
-| $SE_{X_\mu}$ = `r round(sd(e$X_mu)/sqrt(B), 5)` | Standard Error of $X_\mu$ |
+| $\bar{X}$ = `r round(mean(e$X_mu), 4)` | Mean of $X_\mu$ |  
+| $\sigma_{X_\mu}$ = `r round(sd(e$X_mu), 4)` | Standard Deviation of $X_\mu$ |  
+| $\sigma_{X_\mu}^2$ = `r round(var(e$X_mu), 4)` | Variance of $X_\mu$ |  
+| $SE_{X_\mu}$ = `r round(sd(e$X_mu)/sqrt(B), 4)` | Standard Error of $X_\mu$ |
 &nbsp;
 
 ```{r plot.Xmu.boxplot}
@@ -114,7 +114,9 @@ print(h)
 ```
 &nbsp;
 
-In Figure-2, the histogram graph exhibits a symmetrical (almost) bell-shape density curve overlapping on the histogram suggesting the $X_\mu$ dataset approximates normal distribution. Mean $\bar{X}$ = `r round(mean(e$X_mu), 5)` is statistically equal to the theoretical mean $\mu$, implying that the sample mean is the true mean of the population and this assumption is reinforced by the sample variance $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 5)` and sample standard error $SE_{X_\mu} =$ `r round(sd(e$X_mu)/sqrt(B), 5)` respectively signify the data points of $X_\mu$ will converge around the theoretical mean. Whereas the theoretical variance $\sigma^2$ vs sample variance $\sigma_{X_\mu}^2$ of $X_\mu$ explains the random exponential distribution $X_e$ dataset is skewed (not normal).  
+In Figure-2, the histogram graph exhibits a symmetrical (almost) bell-shape density curve overlapping on the histogram suggesting the $X_\mu$ dataset approximates normal distribution. Mean $\bar{X}$ = `r round(mean(e$X_mu), 4)` is said to be statistically equal to theoretical mean $\mu$, implying that the sample mean is the true mean of the population and this assumption is reinforced by the sample variance $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 4)` and sample standard error $SE_{X_\mu} =$ `r round(sd(e$X_mu)/sqrt(B), 4)` respectively signify the data points of $X_\mu$ will converge around the theoretical mean. 
+
+While both theoretical variance $\sigma^2$ and sample variance $\sigma_{X_\mu}^2$ are used for measuring the average distance the data points from the mean of respective population and sample dataset. Compare $\sigma^2 = 25$ against $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 4)` is quite apparent to our naked eyes that the sample variance is more representative of the variability of the population data than the theoretical variance if the sample mean $\bar{X}$ is true and equivalent to the theoretical population mean.  
 &nbsp;
 
 ```{r h.test, echo=TRUE}
@@ -122,33 +124,34 @@ In Figure-2, the histogram graph exhibits a symmetrical (almost) bell-shape dens
 CI_t <- mean(e$X_mu) + c(-1,1) * qt(1 - alpha/2, NROW(e$X_mu) - 1) * sqrt(var(e$X_mu)/length(e$X_mu))
 t_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
 p_val <- pt(q = abs(t_val), df = B - 1, lower.tail = FALSE) * 2  #one-sided p-value
-
-# # z-test
-# CI_z <- mean(e$X_mu) + c(-1,1) * qnorm(1 - alpha/2) * sqrt(var(e$X_mu)/B)
-# z_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu)))
-# p_val <- pnorm(abs(z_val), lower.tail = FALSE) * 2  #p-value for one-sided test
-# # p_val <- pnorm(abs(z_val), lower.tail = FALSE)      #p-value for two-sided test
 ```
 &nbsp;
+<!-- # z-test -->
+<!-- CI_z <- mean(e$X_mu) + c(-1,1) * qnorm(1 - alpha/2) * sqrt(var(e$X_mu)/B) -->
+<!-- z_val <- (mean(e$X_mu) - mu)/(sd(e$X_mu)/sqrt(NROW(e$X_mu))) -->
+<!-- p_val <- pnorm(abs(z_val), lower.tail = FALSE) * 2  #p-value for one-sided test -->
+<!-- # p_val <- pnorm(abs(z_val), lower.tail = FALSE)      #p-value for two-sided test -->
 
-Let's do a student's T-test to verify our claim; hypothesis test set up as follow:  
+Let's do a student's T-test to verify our claims; hypothesis test set up as follow:  
 **H~0~** : $\bar{X} = \mu$  
 **H~A~** : $\bar{X} \neq \mu$  
-$CI_t = \bar{X} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 5)`  
-$t.value = \frac{\bar{X}-\mu}{SE_\bar{X}} =$ `r round(t_val, 5)`  
-$p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 5)`  
+$CI_t = \bar{X} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
+$t.value = \frac{\bar{X}-\mu}{SE_\bar{X}} =$ `r round(t_val, 4)`  
+$p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
 
-$p.value =$ `r round(p_val, 5)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~**, which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X}$ represents the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 5)` & upper = `r round(CI_t[2], 5)`) tightly wrapping around the theoretical mean $\mu$ indicates the sample mean $\bar{X}$ will occur very closely to the $\mu$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X}$ is estimating what it was intended to measure.
+$p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~**, which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X}$ represents the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly wrap around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.
 
-Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ tells us if the $\bar{X}$ will less than or greater than $\mu$.  
+Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ will tells us if $\bar{X}$ is less than or greater than $\mu$. 
 
-Though Central Limit Theorem (CLT) states that the distribution of a statistic will become more normal when the number of sampling data is sufficiently large. Let us take a look at the dataset $X_e$ consisting of 1000 random exponential, and how the data in $X_e$ are distributed.  
+Though Central Limit Theorem (CLT) states that the distribution of a sample statistic will become more normal when the number of sampling data is sufficiently large. Let us take a look at the dataset $X_e$ consisting of 1000 random exponential, and how the data in $X_e$ are distributed.  
+&nbsp;
 
 5-Number Summary of $X_e$     
 ```{r Xe.summa}
 summary(e$X_e)
 ```
 &nbsp;
+
 ```{r plot.Xe.boxplot}
 # boxplot for exponential distributed random sample data 'X_e'
 b <- ggplot()
@@ -160,6 +163,7 @@ b <- b + labs(x = expression("X"[e]), caption = "Figure-3")
 print(b)
 ```
 &nbsp;
+
 ```{r plot.Xe.hist}
 # histogram for 1000 random exponential sample data 'X_e'
 h <- ggplot(data = e, mapping = aes(x = X_e, y = ..density..)) 

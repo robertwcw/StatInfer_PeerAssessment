@@ -12,11 +12,11 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 # Sys.setenv(TZ = "UTC")      # set global TZ to UTC for POSIXt class
 
-.Rfliburl <- "https://raw.githubusercontent.com/robertwcw/Rflib/master"
-source(file.path(.Rfliburl,"getRflib.R"),local = TRUE)
-source(getRflib("is.defined.R"),local = TRUE)
-source(getRflib("myplclust.R"),local = TRUE)
-source(getRflib("strCap.R"),local = TRUE)
+# .Rfliburl <- "https://raw.githubusercontent.com/robertwcw/Rflib/master"
+# source(file.path(.Rfliburl,"getRflib.R"),local = TRUE)
+# source(getRflib("is.defined.R"),local = TRUE)
+# source(getRflib("myplclust.R"),local = TRUE)
+# source(getRflib("strCap.R"),local = TRUE)
 ```
 
 ```{r init.local}
@@ -25,6 +25,9 @@ library(ggplot2)
 
 if (!requireNamespace("datasets",quietly = TRUE)) install.packages("datasets")
 library(datasets)
+
+if (!requireNamespace("modelr",quietly = TRUE)) install.packages("modelr")
+library(modelr)
 
 par.def <- par(no.readonly = TRUE) 
 ```
@@ -211,7 +214,27 @@ Note that mean $\bar{X_e}$ and variane $\sigma_{X_e}^2$ of the dataset $X_e$ are
 
 ### Basic Inferential Data Analysis
 
+
+```{r load.data}
 data("ToothGrowth")
 delayedAssign("tg", ToothGrowth)
 rm(ToothGrowth)
 
+tg.oj <- subset(tg, as.numeric(supp) == 1)
+tg.vc <- subset(tg, as.numeric(supp) == 2)
+
+B.tg <- bootstrap(tg, B)
+i <- as.numeric(B.tg$.id)
+
+
+
+for (i in as.numeric(B.tg$.id)) print(tg[B.tg$strap[[i]][[2]],]$len)
+tg[B.tg$strap[[6]][[2]],]$len
+
+mapplay(mean, tg[B.tg$strap[[6]][[2]],])
+```
+
+```{r eda.tg}
+str(tg)
+summary(tg)
+```

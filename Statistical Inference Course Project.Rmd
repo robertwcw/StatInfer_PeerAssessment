@@ -220,18 +220,17 @@ data("ToothGrowth")
 delayedAssign("tg", ToothGrowth)
 rm(ToothGrowth)
 
-tg.oj <- subset(tg, as.numeric(supp) == 1)
-tg.vc <- subset(tg, as.numeric(supp) == 2)
+# tg.oj <- subset(tg, as.numeric(supp) == 1)  #"OJ" supplement
+# tg.vc <- subset(tg, as.numeric(supp) == 2)  #"VC" supplement
+# B.tg.oj <- bootstrap(tg.oj, B/2)  
+# B.tg.vc <- bootstrap(tg.vc, B/2)  
 
 B.tg <- bootstrap(tg, B)
-i <- as.numeric(B.tg$.id)
 
+B.tg.len <- NULL
+for (i in as.numeric(B.tg$.id)) 
+    B.tg.len <- c(B.tg.len, mean(tg[B.tg$strap[[i]][[2]],]$len))
 
-
-for (i in as.numeric(B.tg$.id)) print(tg[B.tg$strap[[i]][[2]],]$len)
-tg[B.tg$strap[[6]][[2]],]$len
-
-mapplay(mean, tg[B.tg$strap[[6]][[2]],])
 ```
 
 ```{r eda.tg}

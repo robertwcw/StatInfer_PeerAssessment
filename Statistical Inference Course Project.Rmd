@@ -214,12 +214,54 @@ Note that mean $\bar{X_e}$ and variane $\sigma_{X_e}^2$ of the dataset $X_e$ are
 
 ### Basic Inferential Data Analysis
 
-
-```{r load.data}
+This is the second part of this course work. We will perform basic statistical inferential data analysis on the coefficient between tooth growth and supplement types and dosage. Include herein the structure of ToothGrowth dataset loaded into RStudio's work space.  
+```{r load.ToothGrowth}
 data("ToothGrowth")
 delayedAssign("tg", ToothGrowth)
 rm(ToothGrowth)
+```
+It has 60 rows with 3 variables stored in data frame.  
+- len ......: Length of tooth  
+- supp ...: supplement type {OJ $= 1$, VC $= 2$}  
+- dose ...: dosage {$ \frac{1}{2} $, $ 1 $ or $ 2 $}  
 
+```{r eda.ToothGrowth.1}
+# reveal the data structure
+str(tg)
+```
+&nbsp;
+
+5-number summary of ToothGrowth.
+```{r eda.ToothGrowth.2}
+summary(tg)
+```
+
+```{r eda.ToothGrowth.3, warning=FALSE, fig.cap="Figure-5", fig.align="left"}
+scatter.smooth(x = tg$dose, y = tg$len,
+               ylab = "Tooth Length",
+               xlab = "Supplements Dosage",
+               lpars = list(col = "red", lwd = 3, lty = 3))   
+```
+&nbsp;
+There is an overall up trend observed in the rate of tooth growth for OJ supplement and VC supplement given to the test subjects separated into two groups of 30 subjects each. Nonetheless rate of growth varied on different dosage administered. In Figure-5, the red dotted smooth trend line on the scatter plot exhibits higher growth rate for lower dosage than slower rate when higher dosage was administered on the participants.  
+
+```{r eda.ToothGrowth.4, warning=FALSE, fig.cap="Figure-6", fig.align="left"}
+par(mfrow = c(1,2))
+with(subset(tg, as.numeric(supp) == 1), 
+     scatter.smooth(x = dose, y = len,
+                    ylab = "Tooth Length",
+                    xlab = "Supplements Dosage",
+                    lpars = list(col = "red", lwd = 3, lty = 3))   
+     )
+with(subset(tg, as.numeric(supp) == 2), 
+     scatter.smooth(x = dose, y = len,
+                    ylab = "Tooth Length",
+                    xlab = "Supplements Dosage",
+                    lpars = list(col = "red", lwd = 3, lty = 3))   
+     )
+```
+
+```{r}
 # tg.oj <- subset(tg, as.numeric(supp) == 1)  #"OJ" supplement
 # tg.vc <- subset(tg, as.numeric(supp) == 2)  #"VC" supplement
 # B.tg.oj <- bootstrap(tg.oj, B/2)  
@@ -233,7 +275,4 @@ for (i in as.numeric(B.tg$.id))
 
 ```
 
-```{r eda.tg}
-str(tg)
-summary(tg)
-```
+

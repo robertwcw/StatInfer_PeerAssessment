@@ -276,6 +276,8 @@ print(h)
 ```
 &nbsp;
 
+##### Data analysis summary
+
 The exploratory graph plots (Figure-5 & Figure-6) show that the data distribution for ToothGrowth dataset does not look Gaussian.  
 
 ```{r eda.ToothGrowth.5, warning=FALSE, fig.cap="Figure-7", fig.align="left"}
@@ -304,10 +306,26 @@ with(subset(tg, as.numeric(supp) == 2),
                     xlab = "VC Dosage",
                     lpars = list(col = "blue", lwd = 3, lty = 3))   
      )
+
+oj05 <- subset(tg, (dose == 1/2 & as.numeric(supp) == 1),len)$len
+oj10 <- subset(tg, (dose == 1 & as.numeric(supp) == 1),len)$len
+oj20 <- subset(tg, (dose == 2 & as.numeric(supp) == 1),len)$len
+vc05 <- subset(tg, (dose == 1/2 & as.numeric(supp) == 2),len)$len
+vc10 <- subset(tg, (dose == 1 & as.numeric(supp) == 2),len)$len
+vc20 <- subset(tg, (dose == 2 & as.numeric(supp) == 2),len)$len
 ```
 &nbsp;
 
+The efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red smooth curve on left and blue smooth curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. **OJ** supplement is more effective for tooth growth at lower dosage
 
+| Supplement x Dosage | Mean $\&$ Range |  
+|------------------------|---------------------------------------------------|  
+| **OJ** x $\frac{1}{2}$ | `r mean(oj05)` $\&$ `r range(oj05)` |  
+| **OJ** x $1$ | `r mean(oj10)` $\&$ `r range(oj10)` |  
+| **OJ** x $2$ | `r mean(oj20)` $\&$ `r range(oj20)` |  
+| **VC** x $\frac{1}{2}$ | `r mean(vc05)` $\&$ `r range(vc05)` |  
+| **VC** x $1$ | `r mean(vc10)` $\&$ `r range(vc10)` |  
+| **VC** x $2$ | `r mean(vc20)` $\&$ `r range(vc20)` |  
 
 ```{r}
 # tg.oj <- subset(tg, as.numeric(supp) == 1)  #"OJ" supplement

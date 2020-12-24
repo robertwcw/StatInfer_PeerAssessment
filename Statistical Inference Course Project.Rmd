@@ -425,17 +425,16 @@ print(h)
 | $\bar{X_\mu} =$ `r round(Xmu,4)` | Mean of $\bar{X}$ |  
 | $\sigma_\bar{X} =$ `r round(Xsd,4)` | Standard deviation of $\bar{X}$ |  
 | $\sigma_\bar{X}^2 =$ `r round(Xvar,4)` | Variance of $\bar{X}$ |  
-| $SE_\bar{X}$ = `r round(Xse,4)` | Standard Error of $\bar{X}$ |  
+| $SE_\bar{X} =$ `r round(Xse,4)` | Standard Error of $\bar{X}$ |  
+
+| Supplement | Bootstrapped sampling mean vs Average tooth length |  
+|------------|----------------------------------------------------|  
+| **OJ** | `r round(XOJmu,4)` $vs$ `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
+| **VC** | `r round(XVCmu,4)` $vs$ `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
 &nbsp;
 
 ### Hypothesis Test  
-
-We will conduct a student's T-test to verify our claims; hypothesis test set up as follow:  
-**H~0~** : $\bar{X_\mu} = \mu$  
-**H~A~** : $\bar{X_\mu} \neq \mu$  
-$CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
-$t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X_\mu}} =$ `r round(t_val, 4)`  
-$p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
+&nbsp;
 
 ```{r t.test.tg, echo=TRUE}
 #
@@ -444,12 +443,23 @@ $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`
 # Confidence interval
 CI_t <- Xmu + c(-1,1) * qt(1 - alpha/2, NROW(B.tg.len) - 1) * sqrt(Xvar/B)
 
-# t-value
-t_val <- (Xmu - mean(tg$len))/(Xsd/sqrt(B))
+# t-value 
+t_val <- (Xmu - mean(tg$len))/Xse
 
 # p-value
 p_val <- pt(q = abs(t_val), df = B - 1, lower.tail = FALSE) * 2  #one-sided p-value
 ```
+&nbsp;
+
+We will conduct a student's T-test to verify our claims; hypothesis test set up as follow:  
+**H~0~** : $\bar{X_\mu} = \mu$  
+**H~A~** : $\bar{X_\mu} \neq \mu$  
+$CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
+$t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X}} =$ `r round(t_val, 4)`  
+$p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
+&nbsp;
+
+
 
 
 

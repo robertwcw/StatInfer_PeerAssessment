@@ -86,7 +86,7 @@ colnames(e) <- c("X_e", "X_mu")
 | $\bar{X_\mu}$ = `r round(mean(e$X_mu), 4)` | Mean of $X_\mu$ |  
 | $\sigma_{X_\mu}$ = `r round(sd(e$X_mu), 4)` | Standard Deviation of $X_\mu$ |  
 | $\sigma_{X_\mu}^2$ = `r round(var(e$X_mu), 4)` | Variance of $X_\mu$ |  
-| $SE_{X_\mu}$ = `r round(sd(e$X_mu)/sqrt(B), 4)` | Standard Error of $X_\mu$ |
+| $SE_{X_\mu}$ = `r round(sd(e$X_mu)/sqrt(B), 4)` | Standard Error of $X_\mu$ |  
 &nbsp;
 
 5-Number Summary of $X_\mu$  
@@ -249,10 +249,9 @@ Let's assume the following theoretical statistics for the population data that w
 
 | Theoretical Statistics for the population | |
 |------------------------|---------------------------------------------------|
-| $\mu_0$ = `r round(mean(tg$len), 4)` | Theoretical mean of tooth length |  
-| $\sigma_0^2$ = `r round(var(tg$len), 4)` | Theoretical variance of tooth length |  
-| $\mu_d$ = `r round(mean(tg$dose), 4)` | Theoretical mean of supplement dosage |  
-| $\sigma_d^2$ = `r round(var(tg$dose), 4)` | Theoretical variance of supplement dosage |  
+| $\mu$ = `r round(mean(tg$len),4)` | Theoretical mean |  
+| $\sigma$ = `r round(sd(tg$len),4)` | Theoretical standard deviation |  
+| $\sigma^2$ = `r round(var(tg$len),4)` | Theoretical variance |  
 &nbsp;
 
 #### Exploratory graph plots  
@@ -325,7 +324,7 @@ for (j in c("OJ","VC")) {
 
 &nbsp;
 
-Though the efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note that average growth rate for **OJ** is more rapid at lower than mean $\mu_d$ (yellow vertical line) dosage and tapered at above mean $\mu_d$ dosage, while average growth rate for **VC** is more uniform across the recommended dosage range. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
+Though the efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note that average growth rate for **OJ** is more rapid at lower than mean dosage `r mean(tg$dose)` (yellow vertical line) and tapered at above mean dosage, while average growth rate for **VC** is more uniform across the recommended dosage. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
 &nbsp;
 
 | Supplement x Dosage | Length (Mean, Min, Max) |  
@@ -338,10 +337,12 @@ Though the efficacy of the supplements has seen positive result in promoting too
 | **VC** x 2 | `r mean(VC20)`, `r range(VC20)` |  
 &nbsp;
 
-Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. The average length of growth for each supplement type vs theoretical mean listed herein, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu_0$, than **VC** type which tooth length is shorter than the hypothetical mean $\mu_0$.  
+Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. The average length of tooth growth attained for each supplement type vs theoretical mean listed herein, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu$, than **VC** type which tooth length is fall short of hypothetical mean $\mu$.  
+
+Thus far, we have relied on empirical evidence on our findings about the efficacy of the supplements on growth rate on tooth length, therefore hypothesis testing is mandatory to established statistical evidence of 95% confidence level to substantiate our conclusions.  
 &nbsp;
 
-| Supplement | Average Length vs hypothetical mean $\mu_0$ = `r round(mean(tg$len),4)` |  
+| Supplement | Average Length vs hypothetical mean $\mu$ = `r round(mean(tg$len),4)` |  
 |------------|-------------------------------|  
 | **OJ** | `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
 | **VC** | `r round(mean(subset(tg, as.numeric(supp) == 2)$len),4)` |  
@@ -356,21 +357,44 @@ Take note that ToothGrowth is a data table of 60 rows by 3 columns, the bootstra
 &nbsp;
 
 ```{r boot.strap, echo=TRUE}
-# tg.oj <- subset(tg, as.numeric(supp) == 1)  #"OJ" supplement
-# tg.vc <- subset(tg, as.numeric(supp) == 2)  #"VC" supplement
-# B.tg.oj <- bootstrap(tg.oj, B/2)  
-# B.tg.vc <- bootstrap(tg.vc, B/2)  
-
+#
+# bootstrapping ToothGrowth sampling dataset
 B.tg <- bootstrap(tg, B*2)
 
+# calculating means for bootstrapped ToothGrowth sampling distribution
 B.tg.len <- NULL
-for (i in as.numeric(B.tg$.id)) 
+for (i in as.numeric(B.tg$.id)) {
     B.tg.len <- c(B.tg.len, mean(tg[B.tg$strap[[i]][[2]],]$len))
+}
 
+# Statistics estimates for ToothGrowth sampling mean distribution
+B <- NROW(B.tg.len)
+Xmu <- mean(B.tg.len)
+Xsd <- sd(B.tg.len)
+Xvar <- var(B.tg.len)
+Xse <- sd(B.tg.len)/sqrt(B)
+
+# Mean estimate for tooth length on OJ supplement
+tg.oj <- NULL
+XOJmu <- NULL
+for (i in as.numeric(B.tg$.id)) {
+    tg.oj <- subset(tg[B.tg$strap[[i]][[2]],], as.numeric(supp) == 1, len)
+    XOJmu <- c(XOJmu, mean(tg.oj$len))
+}
+XOJmu <- mean(XOJmu)
+
+# Mean estimate for tooth length on VC supplement
+tg.oj <- NULL
+XVCmu <- NULL
+for (i in as.numeric(B.tg$.id)) {
+    tg.oj <- subset(tg[B.tg$strap[[i]][[2]],], as.numeric(supp) == 2, len)
+    XVCmu <- c(XVCmu, mean(tg.oj$len))
+}
+XVCmu <- mean(XVCmu)
 ```
 &nbsp;
 
-Let's take a look at the bootstrapped ToothGrowth sampling data distribution (Figure-9 & Figure-10), as oppose to its primal distribution (Figure-5 & Figure-6). It looks more Gaussian now.  
+Let's take a look at the bootstrapped ToothGrowth sampling mean distribution $\bar{X}$ (Figure-9 & Figure-10), as oppose to its primal distribution (Figure-5 & Figure-6). It looks more Gaussian now than before.  
 &nbsp;
 
 ```{r boot.strap.2}
@@ -396,7 +420,36 @@ print(h)
 
 &nbsp;
 
+| Statistics Estimates for $\bar{X}$ |
+|----------------------------|--------------------------------------------------|
+| $\bar{X_\mu} =$ `r round(Xmu,4)` | Mean of $\bar{X}$ |  
+| $\sigma_\bar{X} =$ `r round(Xsd,4)` | Standard deviation of $\bar{X}$ |  
+| $\sigma_\bar{X}^2 =$ `r round(Xvar,4)` | Variance of $\bar{X}$ |  
+| $SE_\bar{X}$ = `r round(Xse,4)` | Standard Error of $\bar{X}$ |  
+&nbsp;
+
 ### Hypothesis Test  
+
+We will conduct a student's T-test to verify our claims; hypothesis test set up as follow:  
+**H~0~** : $\bar{X_\mu} = \mu$  
+**H~A~** : $\bar{X_\mu} \neq \mu$  
+$CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
+$t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X_\mu}} =$ `r round(t_val, 4)`  
+$p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
+
+```{r t.test.tg, echo=TRUE}
+#
+# t-test for ToothGrowth dataset
+
+# Confidence interval
+CI_t <- Xmu + c(-1,1) * qt(1 - alpha/2, NROW(B.tg.len) - 1) * sqrt(Xvar/B)
+
+# t-value
+t_val <- (Xmu - mean(tg$len))/(Xsd/sqrt(B))
+
+# p-value
+p_val <- pt(q = abs(t_val), df = B - 1, lower.tail = FALSE) * 2  #one-sided p-value
+```
 
 
 

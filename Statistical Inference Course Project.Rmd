@@ -6,7 +6,6 @@ output:
   html_document: 
     fig_caption: yes
     keep_md: yes
-    toc_depth: 5
 ---
 
 ```{r setup, include=FALSE}
@@ -34,7 +33,7 @@ par.def <- par(no.readonly = TRUE)
 ```
 &nbsp;
 
-## Synopsis
+# Synopsis
 
 This course work embarks on the objective to help us understand how simulation and Central Limit Theorem (CLT) are useful in statistical inference studies (resampling, confidence interval and hypothesis testing etc...) when real-world data isn't readily available or an ideal size of sampling data is constrained by the inevitable factors such as budget, time-limit and manpower etc. Simulation is handy for pumping up the sampling data size to enable a more normal distribution approach for statistical analysis, while CLT states that a sampling distribution of the statistic estimates for a variable, of sufficiently large sample size will approximate normal distribution regardless of the variable's distribution in the population, with the sampling estimates converging around the population estimates.
 
@@ -43,7 +42,7 @@ First part of the course work is to gauge our understanding of Statistical Simul
 Second part of the course work is to assess our comprehension in basic Statistical Inference using the R's "ToothGrowth" dataset.  
 &nbsp;
 
-### Statistical Simulation
+## Statistical Simulation
 
 This course work will require two simulated random exponential distribution datasets, namely $X_e$ (X-exponential) and $X_\mu$ (X-mu), to demonstrate how CLT explains the statistics of a sample dataset regardless of its distribution in the population from where the sample was drawn, will eventually fall into a normal distribution pattern when the size of sampling data increased to sufficient number.
 
@@ -150,11 +149,11 @@ $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`
 
 $p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~** , which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X_\mu}$ represents the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly wraps around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X_\mu}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X_\mu}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.
 
-#### Sample Mean vs Theoretical Mean
+### Sample Mean vs Theoretical Mean
 
 Results from statistical simulation tell us that the sample mean $\bar{X_\mu} =$ `r round(mean(e$X_mu), 4)` is estimating the population's theoretical mean $\mu$. 
 
-#### Sample Variance vs Theoretical Variance
+### Sample Variance vs Theoretical Variance
 
 Sample variance $\sigma_\mu^2 =$ `r round(var(e$X_mu), 4)` is much smaller than the population's theoretical variance $\sigma^2$, hinting the population distribution is not Gaussian as compare to the sample distribution.  
 &nbsp;
@@ -162,7 +161,7 @@ Sample variance $\sigma_\mu^2 =$ `r round(var(e$X_mu), 4)` is much smaller than 
 Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X_\mu}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ will tells us if $\bar{X_\mu}$ is less than or greater than $\mu$.  
 &nbsp;
 
-#### Distributions
+### Distributions
 
 Though Central Limit Theorem (CLT) states that the distribution of the sample statistic will become more Gaussian when the number of sampling data is sufficiently large. Let us take the dataset $X_e$ consisting of 1000 random exponential, which we believe is sizeable enough a sample to demonstrate how certain it will look Gaussian according to the CLT definition. 
 &nbsp;
@@ -213,7 +212,7 @@ Note that mean $\bar{X_e}$ and variane $\sigma_{X_e}^2$ of the dataset $X_e$ are
 &nbsp;
 
 
-### Basic Inferential Data Analysis
+## Basic Inferential Data Analysis  
 
 This is the second part of this course work. We will perform basic statistical inferential data analysis on the coefficient between tooth growth and supplement types and dosage. Include herein the structure of ToothGrowth dataset loaded into RStudio's work space.  
 ```{r load.ToothGrowth}
@@ -221,39 +220,43 @@ data("ToothGrowth")
 delayedAssign("tg", ToothGrowth)
 rm(ToothGrowth)
 ```
-It has 60 rows with 3 variables stored in data frame.  
+&nbsp;
+
+### Exploratory data analysis  
+
+ToothGrowth sampling dataset has 60 rows with 3 variables stored in data frame structure.  
 - len ......: Length of tooth  
 - supp ...: supplement type {OJ $= 1$, VC $= 2$}  
-- dose ...: dosage {$\frac{1}{2}$, $1$ or $2$}
+- dose ...: dosage {$\frac{1}{2}$, $1$ or $2$}  
 &nbsp;
+
+#### Data Structure  
 ```{r eda.ToothGrowth.1}
-# reveal the data structure
+# reveal the data structure of ToothGrowth
 str(tg)
 ```
+
 &nbsp;
 
-#### Exploratory data analysis on ToothGrowth
-&nbsp;
-
-##### 5-Number summary
+#### 5-Number summary  
 ```{r eda.ToothGrowth.2}
 summary(tg)
 ```
 &nbsp;
 
-##### Theoretical Statistics
-
+#### Theoretical Statistics  
 Let's assume the following theoretical statistics for the population data that we are attempting to infer. Theoretical statistics are generally referring to the population statistics that are unknown at this stage, yet to be ascertained via hypothesis test.  
 
 | Theoretical Statistics for the population | |
 |------------------------|---------------------------------------------------|
-| $\mu_l$ = `r round(mean(tg$len), 4)` | Theoretical mean of tooth length |  
-| $\sigma_l^2$ = `r round(var(tg$len), 4)` | Theoretical variance of tooth length |  
+| $\mu_0$ = `r round(mean(tg$len), 4)` | Theoretical mean of tooth length |  
+| $\sigma_0^2$ = `r round(var(tg$len), 4)` | Theoretical variance of tooth length |  
 | $\mu_d$ = `r round(mean(tg$dose), 4)` | Theoretical mean of supplement dosage |  
 | $\sigma_d^2$ = `r round(var(tg$dose), 4)` | Theoretical variance of supplement dosage |  
 &nbsp;
 
-##### Exploratory graph plots
+#### Exploratory graph plots  
+Figure-5 and Figure-6 are initial exploratory plots on ToothGrowth sampling data (see Data Structure). The data distribution does not look Gaussian.  
 
 ```{r eda.ToothGrowth.3}
 b <- ggplot()
@@ -264,7 +267,9 @@ b <- b + geom_boxplot(data = tg, mapping = aes(x = len),
 b <- b + labs(x = "Tooth Length", caption = "Figure-5")
 print(b)  
 ```
+
 &nbsp;
+
 ```{r eda.ToothGrowth.4}
 h <- ggplot(data = tg, mapping = aes(x = len, y = ..density..)) 
 h <- h + geom_histogram(color = "black", fill = "white", bins = 60) +
@@ -274,12 +279,10 @@ h <- h + geom_histogram(color = "black", fill = "white", bins = 60) +
 print(h)
 
 ```
+
 &nbsp;
 
-##### Data analysis summary
-
-The exploratory graph plots (Figure-5 & Figure-6) show that the data distribution for ToothGrowth dataset does not look Gaussian.  
-
+#### Data analysis summary  
 ```{r eda.ToothGrowth.5, warning=FALSE, fig.cap="Figure-7", fig.align="left"}
 scatter.smooth(x = tg$dose, y = tg$len,
                ylab = "Tooth Length",
@@ -287,58 +290,115 @@ scatter.smooth(x = tg$dose, y = tg$len,
                lpars = list(col = "green", lwd = 3, lty = 3))   
 ```
 &nbsp;
-There is an overall up trend in the average rate of tooth growth length on the test subjects administered with either **OJ** supplement or **VC** supplement. The test subjects were separated into two groups of 30 participants each by supplement type. In Figure-7, the green dotted smooth trend line on the scatter plot exhibits a phenomenon where the test subjects given lower dosage of between $\frac{1}{2}$ to $1$ dose experienced higher average tooth growth rate than test subjects given higher dosage of greater than $1$ dose experienced lower average growth rate.  
+
+There is an overall up trend in the average rate of tooth growth length on the test subjects administered with either **OJ** supplement or **VC** supplement. The test subjects were separated into two groups of 30 participants each by supplement type. In Figure-7, the green dotted curve drawn on the scatter plot exhibits a phenomenon where the test subjects given lower dosage of between 1/2 to 1 dose experienced faster average tooth growth rate than test subjects given higher dosage of 2 doses experienced slower average growth rate.  
 
 Let's take the scatter plot further by breaking down the supplements administered on the test subjects into two groups by type **OJ** and type **VC**.
 &nbsp;
 
 ```{r eda.ToothGrowth.6, warning=FALSE, fig.cap="Figure-8", fig.align="left"}
 par(mfrow = c(1,2))
+
 with(subset(tg, as.numeric(supp) == 1), 
      scatter.smooth(x = dose, y = len,
+                    main = "OJ Supplement",
                     ylab = "Tooth Length",
-                    xlab = "OJ Dosage",
+                    xlab = "Dosage",
                     lpars = list(col = "red", lwd = 3, lty = 3))   
      )
+abline(v = mean(subset(tg, as.numeric(supp) == 1)$dose), col = "yellow1")
+
 with(subset(tg, as.numeric(supp) == 2), 
      scatter.smooth(x = dose, y = len,
+                    main = "VC Supplement",
                     ylab = "Tooth Length",
-                    xlab = "VC Dosage",
+                    xlab = "Dosage",
                     lpars = list(col = "blue", lwd = 3, lty = 3))   
      )
+abline(v = mean(subset(tg, as.numeric(supp) == 2)$dose), col = "yellow1")
 
-oj05 <- subset(tg, (dose == 1/2 & as.numeric(supp) == 1),len)$len
-oj10 <- subset(tg, (dose == 1 & as.numeric(supp) == 1),len)$len
-oj20 <- subset(tg, (dose == 2 & as.numeric(supp) == 1),len)$len
-vc05 <- subset(tg, (dose == 1/2 & as.numeric(supp) == 2),len)$len
-vc10 <- subset(tg, (dose == 1 & as.numeric(supp) == 2),len)$len
-vc20 <- subset(tg, (dose == 2 & as.numeric(supp) == 2),len)$len
+for (j in c("OJ","VC")) {
+    for (i in c("05","10","20")) 
+        assign(paste0(j,i), subset(tg, (dose == as.numeric(i)/10 & supp == j),len)$len)
+}
 ```
+
 &nbsp;
 
-The efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red smooth curve on left and blue smooth curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. **OJ** supplement is more effective for tooth growth at lower dosage
+Though the efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note that average growth rate for **OJ** is more rapid at lower than mean $\mu_d$ (yellow vertical line) dosage and tapered at above mean $\mu_d$ dosage, while average growth rate for **VC** is more uniform across the recommended dosage range. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
+&nbsp;
 
-| Supplement x Dosage | Mean $\&$ Range |  
+| Supplement x Dosage | Length (Mean, Min, Max) |  
 |------------------------|---------------------------------------------------|  
-| **OJ** x $\frac{1}{2}$ | `r mean(oj05)` $\&$ `r range(oj05)` |  
-| **OJ** x $1$ | `r mean(oj10)` $\&$ `r range(oj10)` |  
-| **OJ** x $2$ | `r mean(oj20)` $\&$ `r range(oj20)` |  
-| **VC** x $\frac{1}{2}$ | `r mean(vc05)` $\&$ `r range(vc05)` |  
-| **VC** x $1$ | `r mean(vc10)` $\&$ `r range(vc10)` |  
-| **VC** x $2$ | `r mean(vc20)` $\&$ `r range(vc20)` |  
+| **OJ** x $\frac{1}{2}$ | `r mean(OJ05)`, `r range(OJ05)` |  
+| **VC** x $\frac{1}{2}$ | `r mean(VC05)`, `r range(VC05)` |  
+| **OJ** x 1 | `r mean(OJ10)`, `r range(OJ10)` |  
+| **VC** x 1 | `r mean(VC10)`, `r range(VC10)` |  
+| **OJ** x 2 | `r mean(OJ20)`, `r range(OJ20)` |  
+| **VC** x 2 | `r mean(VC20)`, `r range(VC20)` |  
+&nbsp;
 
-```{r}
+Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. The average length of growth for each supplement type vs theoretical mean listed herein, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu_0$, than **VC** type which tooth length is shorter than the hypothetical mean $\mu_0$.  
+&nbsp;
+
+| Supplement | Average Length vs hypothetical mean $\mu_0$ = `r round(mean(tg$len),4)` |  
+|------------|-------------------------------|  
+| **OJ** | `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
+| **VC** | `r round(mean(subset(tg, as.numeric(supp) == 2)$len),4)` |  
+&nbsp;
+
+### Bootstrapping ToothGrowth sampling dataset  
+&nbsp;
+
+R's ToothGrowth sampling dataset used in this course work is not Gaussian in its distribution, so a bootstrapping procedure will help it conform to the central limit theorem definition for subsequent statistical analysis. We will bootstrapped ToothGrowth dataset to 2000 sampling data samples. 
+
+Take note that ToothGrowth is a data table of 60 rows by 3 columns, the bootstrapping procedure will sample with replacement the 60 rows by rowid for each bootstrap sample, thus we will get differing permutation of rows for each data sample in the bootstrapped dataset without altering the underlying intrinsic data definition.  
+&nbsp;
+
+```{r boot.strap, echo=TRUE}
 # tg.oj <- subset(tg, as.numeric(supp) == 1)  #"OJ" supplement
 # tg.vc <- subset(tg, as.numeric(supp) == 2)  #"VC" supplement
 # B.tg.oj <- bootstrap(tg.oj, B/2)  
 # B.tg.vc <- bootstrap(tg.vc, B/2)  
 
-B.tg <- bootstrap(tg, B)
+B.tg <- bootstrap(tg, B*2)
 
 B.tg.len <- NULL
 for (i in as.numeric(B.tg$.id)) 
     B.tg.len <- c(B.tg.len, mean(tg[B.tg$strap[[i]][[2]],]$len))
 
 ```
+&nbsp;
+
+Let's take a look at the bootstrapped ToothGrowth sampling data distribution (Figure-9 & Figure-10), as oppose to its primal distribution (Figure-5 & Figure-6). It looks more Gaussian now.  
+&nbsp;
+
+```{r boot.strap.2}
+b <- ggplot()
+b <- b + geom_boxplot(data = as.data.frame(B.tg.len), mapping = aes(x = B.tg.len), 
+                      outlier.colour = "darkorange",
+                      size = 0.5,
+                      varwidth = FALSE)
+b <- b + labs(x = "Tooth Length", caption = "Figure-9")
+print(b)  
+```
+
+&nbsp;
+
+```{r boot.strap.3}
+h <- ggplot(data = as.data.frame(B.tg.len), mapping = aes(x = B.tg.len, y = ..density..)) 
+h <- h + geom_histogram(color = "black", fill = "white", bins = 100) +
+         geom_density(alpha = 0.5, fill = "#FF6666", col = "red") +
+         geom_vline(aes(xintercept = mean(x = B.tg.len)), lty = 1, lwd = 1, col = "blue") +
+        labs(x = "Tooth Length", caption = "Figure-10")
+print(h)
+```
+
+&nbsp;
+
+### Hypothesis Test  
+
+
+
 
 

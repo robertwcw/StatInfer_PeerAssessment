@@ -35,18 +35,20 @@ par.def <- par(no.readonly = TRUE)
 
 # Synopsis
 
-This course work embarks on the objective to help us understand how simulation and Central Limit Theorem (CLT) are useful in statistical inference studies (resampling, confidence interval and hypothesis testing etc...) when real-world data isn't readily available or an ideal size of sampling data is constrained by the inevitable factors such as budget, time-limit and manpower etc. Simulation is handy for pumping up the sampling data size to enable a more normal distribution approach for statistical analysis, while CLT states that a sampling distribution of the statistic estimates for a variable, of sufficiently large sample size will approximate normal distribution regardless of the variable's distribution in the population, with the sampling estimates converging around the population estimates.
+This course work embarks on the objective to help us understand how simulation and Central Limit Theorem (CLT) are useful in statistical inference studies (resampling, confidence interval and hypothesis testing etc...) when real-world data isn't readily available or an ideal size of sampling data is constrained by the inevitable factors such as budget, time-limit and manpower et cetera. Simulation is handy for pumping up the sampling data size to facilitate statistical analysis using normal distribution approach as CLT states that statistics estimates of the sampling distribution size sufficiently large will approximate normal distribution with the sampling estimates converging around the population estimates, irregardless of the population underlying distribution.
 
-First part of the course work is to gauge our understanding of Statistical Simulation and Central Limit Theorem.  
+First part of the course work is to gauge our understanding on Statistical Simulation and Central Limit Theorem.  
 
-Second part of the course work is to assess our comprehension in basic Statistical Inference using the R's "ToothGrowth" dataset.  
+Second part of the course work is to assess our comprehension in basic Statistical Inference using R's "ToothGrowth" dataset package.  
 &nbsp;
 
 ## Statistical Simulation
 
-This course work will require two simulated random exponential distribution datasets, namely $X_e$ (X-exponential) and $X_\mu$ (X-mu), to demonstrate how CLT explains the statistics of a sample dataset regardless of its distribution in the population from where the sample was drawn, will eventually fall into a normal distribution pattern when the size of sampling data increased to sufficient number.
+This course work will require two simulated random exponential distribution, namely $X_e$ (X-exponential) and $X_\mu$ (X-mu), to demonstrate how CLT explains the statistics of a sample dataset irregardless of its distribution in the population from where the sample was drawn, will eventually fall into normal distribution pattern when the size of sampling data increased to sufficient number.
 
-Specification of the two datasets used in this demonstration, as follows:  
+Specification of the two datasets used in this demonstration, as follow:  
+
+$Table-1$  
 
 |   |   |  
 |------------------|------------------------------------------------------------|  
@@ -81,8 +83,10 @@ colnames(e) <- c("X_e", "X_mu")
 ```
 &nbsp;
 
-| Statistics Estimates of $X_\mu$ |
-|------------------------|---------------------------------------------------|
+$Table-2$  
+
+| Statistics Estimates of $X_\mu$ |  
+|------------------------|---------------------------------------------------|  
 | $\bar{X_\mu}$ = `r round(mean(e$X_mu), 4)` | Mean of $X_\mu$ |  
 | $\sigma_{X_\mu}$ = `r round(sd(e$X_mu), 4)` | Standard Deviation of $X_\mu$ |  
 | $\sigma_{X_\mu}^2$ = `r round(var(e$X_mu), 4)` | Variance of $X_\mu$ |  
@@ -115,14 +119,15 @@ The shape formation of boxplot graph for dataset $X_\mu$ in Figure-1 suggests th
 h <- ggplot(data = e, mapping = aes(x = X_mu, y = ..density..)) 
 h <- h + geom_histogram(color = "black", fill = "white", bins = n) +
         geom_density(alpha = 0.5, fill = "#FF6666", col = "red") +
-        geom_vline(aes(xintercept = mean(x = X_mu)), lty = 1, lwd = 1, col = "blue") +
-        geom_vline(aes(xintercept = mu), lty = 2, lwd = 0.8, col = "green") +
+        geom_vline(aes(xintercept = mean(x = X_mu), color = "X_mu"), lty = 1, lwd = 1) +
+        geom_vline(aes(xintercept = mu, color = "mu"), lty = 2, lwd = 0.8) +
         labs(x = expression("X"[mu]), caption = "Figure-2")
+h <- h + scale_color_manual(name = "statistics", values = c("blue", "green"))
 print(h)
 ```
 &nbsp;
 
-In Figure-2, the histogram graph exhibits a symmetrical (almost) bell-shape density curve overlapping on the histogram suggesting the $X_\mu$ dataset approximates normal distribution. Mean $\bar{X_\mu}$ = `r round(mean(e$X_mu), 4)` is said to be statistically equal to theoretical mean $\mu$, implying that the sample mean is the true mean of the population and this assumption is reinforced by the sample variance $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 4)` and sample standard error $SE_{X_\mu} =$ `r round(sd(e$X_mu)/sqrt(B), 4)` respectively signify the data points of $X_\mu$ will converge around the theoretical mean. 
+In Figure-2, the histogram graph exhibits a symmetrical (almost) bell-shape density curve overlapping on the histogram suggesting the $X_\mu$ dataset approximates normal distribution. Mean $\bar{X_\mu}$ = `r round(mean(e$X_mu), 4)` (green vertical line) is said to be statistically equivalent to theoretical mean $\mu$ (blue vertical line), implying that the sample mean is the true mean of the population and this assumption is reinforced by the sample variance $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 4)` and sample standard error $SE_{X_\mu} =$ `r round(sd(e$X_mu)/sqrt(B), 4)` respectively signify the data points of $X_\mu$ will converge around the theoretical mean. 
 
 While both theoretical variance $\sigma^2$ and sample variance $\sigma_{X_\mu}^2$ are used for measuring the average distance the data points from the mean of respective population and sample dataset. Compare $\sigma^2 = 25$ against $\sigma_{X_\mu}^2 =$ `r round(var(e$X_mu), 4)` is quite apparent to our naked eyes that the sample variance is more representative of the variability of the population data than the theoretical variance if the sample mean $\bar{X_\mu}$ is true and equivalent to the theoretical population mean.  
 &nbsp;
@@ -150,35 +155,38 @@ $CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}
 $t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X_\mu}} =$ `r round(t_val, 4)`  
 
 $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
+&nbsp;
 
-$p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~** , which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X_\mu}$ postulating the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly clasping around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X_\mu}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X_\mu}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.
+$p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~** , which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X_\mu}$ postulating the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly clasping around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X_\mu}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X_\mu}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.  
 
 ### Sample Mean vs Theoretical Mean
 
-Results from statistical simulation tell us that the sample mean $\bar{X_\mu} =$ `r round(mean(e$X_mu), 4)` is estimating the population's theoretical mean $\mu$. 
+Results from statistical simulation tell us that the sample mean $\bar{X_\mu} =$ `r round(mean(e$X_mu), 4)` is estimating the population's theoretical mean $\mu$.  
 
 ### Sample Variance vs Theoretical Variance
 
 Sample variance $\sigma_\mu^2 =$ `r round(var(e$X_mu), 4)` is much smaller than the population's theoretical variance $\sigma^2$, hinting the population distribution is not Gaussian as compare to the sample distribution.  
 &nbsp;
 
-Note that the vertical blue solid line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X_\mu}$ which is positioned ever so closely next to the theoretical mean $\mu$, where $t.value$ will tells us if $\bar{X_\mu}$ is less than or greater than $\mu$.  
+Note that the green vertical line plotted on the histogram graph in Figure-2 represents the sample mean $\bar{X_\mu}$ which is positioned ever so closely next to the theoretical mean $\mu$ (blue vertical line), where $t.value$ will tells us if $\bar{X_\mu}$ is less than or greater than $\mu$.  
 &nbsp;
 
 ### Distributions
 
-Though Central Limit Theorem (CLT) states that the distribution of the sample statistic will become more Gaussian when the number of sampling data is sufficiently large. Let us take the dataset $X_e$ consisting of 1000 random exponential, which we believe is sizeable enough a sample to demonstrate how certain it will look Gaussian according to the CLT definition. 
+Though Central Limit Theorem (CLT) states that the distribution of the sample statistic will become more Gaussian when the number of sampling data is sufficiently large. Let us take the dataset $X_e$ consisting of 1000 random exponential, which we believe is sizeable enough a sample to demonstrate how certain it will look Gaussian according to the CLT definition.  
 &nbsp;
 
-| Statistics Estimates of $X_e$ | |
-|------------------------|---------------------------------------------------|
+$Table-3$  
+
+| Statistics Estimates of $X_e$ | |  
+|------------------------|---------------------------------------------------|  
 | $\bar{X_e}$ = `r round(mean(e$X_e), 4)` | Mean of $X_e$ |  
 | $\sigma_{X_e}$ = `r round(sd(e$X_e), 4)` | Standard Deviation of $X_e$ |  
 | $\sigma_{X_e}^2$ = `r round(var(e$X_e), 4)` | Variance of $X_e$ |  
 | $SE_{X_e}$ = `r round(sd(e$X_e)/sqrt(B), 4)` | Standard Error of $X_e$ |  
 &nbsp;
 
-5-Number Summary of $X_e$     
+5-Number Summary of $X_e$  
 ```{r Xe.summa}
 summary(e$X_e)
 ```
@@ -202,17 +210,18 @@ h <- ggplot(data = e, mapping = aes(x = X_e, y = ..density..))
 h <- h + 
     geom_histogram(color = "black", fill = "white", bins = n) +
     geom_density(alpha = 0.5, fill = "#FF6666", col = "red") +
-    geom_vline(aes(xintercept = mean(x = X_e)), lty = 1, lwd = 1, col = "blue") +
-    geom_vline(aes(xintercept = mu), lty = 2, lwd = 0.8, col = "green") +
+    geom_vline(aes(xintercept = mean(x = X_e), color = "X_e"), lty = 1, lwd = 1) +
+    geom_vline(aes(xintercept = mu, color = "mu"), lty = 2, lwd = 0.8) +
     labs(x = expression("X"[e]), caption = "Figure-4")
+h <- h + scale_color_manual(name = "statistics", values = c("blue", "green"))
 print(h)
 
 ```
 &nbsp;
 
-Boxplot graph in Figure-3 and histogram (with density curve) graph in Figure-4 are plotted based on the same $X_e$ dataset, clearly they don't look Gaussian at all but are skewed (right skewed in this case). The phenomenon explains that CLT only works on the sampling statistic e.g. sampling means, but not on the as-is sampling data irregardless of size.
+Boxplot graph in Figure-3 and histogram (with density curve) graph in Figure-4 are plotted based on the same $X_e$ dataset, clearly they don't look Gaussian at all but are skewed (right skewed in this case). This phenomenon explains that only the sampling statistic e.g. sampling means will approximate normal distribution for adequately large sample size irregardless of the underlying data distribution. Having said that, the as-is data in the sample dataset will not approximate Gaussian distribution irregardless of size.  
 
-Note that mean $\bar{X_e}$ and variane $\sigma_{X_e}^2$ of the dataset $X_e$ are both echoing the theoretical mean $\mu$ and $\sigma$, whereas only the $\bar{X_\mu}$ mimic the theoretical mean but $\sigma_{X_\mu}^2$ does not resonate theoretical variance, which is in line with our prior supposition about the population distribution is not Gaussian compare to the sample distribution.  
+Note that mean $\bar{X_e}$ and variane $\sigma_{X_e}^2$ of the dataset $X_e$ are both echoing the theoretical mean $\mu$ (blue vertical line) and $\sigma$, whereas only the $\bar{X_\mu}$ (green vertical line) mimic the theoretical mean but $\sigma_{X_\mu}^2$ does not resonate the theoretical variance, which is in line with our prior supposition about the population distribution is not Gaussian compare to the sample distribution.  
 &nbsp;
 
 
@@ -251,8 +260,10 @@ summary(tg)
 #### Theoretical Statistics  
 Let's assume the following theoretical statistics for the population data that we are attempting to infer. Theoretical statistics are generally referring to the population statistics that are unknown at this stage, yet to be ascertained via hypothesis test.  
 
-| Theoretical Statistics for the population | |
-|------------------------|---------------------------------------------------|
+$Table-4$  
+
+| Theoretical Statistics for the population | |  
+|------------------------|---------------------------------------------------|  
 | $\mu$ = `r round(mean(tg$len),4)` | Theoretical mean |  
 | $\sigma$ = `r round(sd(tg$len),4)` | Theoretical standard deviation |  
 | $\sigma^2$ = `r round(var(tg$len),4)` | Theoretical variance |  
@@ -285,18 +296,19 @@ print(h)
 
 &nbsp;
 
-#### Data analysis summary  
+#### Data analysis summary
 ```{r eda.ToothGrowth.5, warning=FALSE, fig.cap="Figure-7", fig.align="left"}
 scatter.smooth(x = tg$dose, y = tg$len,
                ylab = "Tooth Length",
                xlab = "Supplements Dosage",
+               main = "Overall Rate of Growth (Type OJ & Type VC)",
                lpars = list(col = "green", lwd = 3, lty = 3))   
 ```
 &nbsp;
 
 There is an overall up trend in the average rate of tooth growth length on the test subjects administered with either **OJ** supplement or **VC** supplement. The test subjects were separated into two groups of 30 participants each by supplement type. In Figure-7, the green dotted curve drawn on the scatter plot exhibits a phenomenon where the test subjects given lower dosage of between 1/2 to 1 dose experienced faster average tooth growth rate than test subjects given higher dosage of 2 doses experienced slower average growth rate.  
 
-Let's take the scatter plot further by breaking down the supplements administered on the test subjects into two groups by type **OJ** and type **VC**.
+Let's take the scatter plot further by breaking down the supplements administered on the test subjects into two groups by type **OJ** and type **VC**.  
 &nbsp;
 
 ```{r eda.ToothGrowth.6, warning=FALSE, fig.cap="Figure-8", fig.align="left"}
@@ -307,7 +319,7 @@ with(subset(tg, as.numeric(supp) == 1),
                     main = "OJ Supplement",
                     ylab = "Tooth Length",
                     xlab = "Dosage",
-                    lpars = list(col = "red", lwd = 3, lty = 3))   
+                    lpars = list(col = "red", lwd = 3, lty = 1))   
      )
 abline(v = mean(subset(tg, as.numeric(supp) == 1)$dose), col = "yellow1")
 
@@ -316,7 +328,7 @@ with(subset(tg, as.numeric(supp) == 2),
                     main = "VC Supplement",
                     ylab = "Tooth Length",
                     xlab = "Dosage",
-                    lpars = list(col = "blue", lwd = 3, lty = 3))   
+                    lpars = list(col = "blue", lwd = 3, lty = 1))   
      )
 abline(v = mean(subset(tg, as.numeric(supp) == 2)$dose), col = "yellow1")
 
@@ -328,8 +340,10 @@ for (j in c("OJ","VC")) {
 
 &nbsp;
 
-Though the efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note that average growth rate for **OJ** is more rapid at lower than mean dosage `r mean(tg$dose)` (yellow vertical line) and tapered at above mean dosage, while average growth rate for **VC** is more uniform across the recommended dosage. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
+Though the efficacy of the supplements has seen positive result in promoting tooth growth for both type **OJ** and type **VC** as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note the average growth rate for **OJ** is more rapid at lower than mean dosage of `r mean(tg$dose)` doses (yellow vertical line) and tapering or slowing visibly at above the mean dosage, while average growth rate for **VC** is more uniform across the recommended dosage but tapering slightly at above the mean dosage. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
 &nbsp;
+
+$Table-5$  
 
 | Supplement x Dosage | Tooth Length (Mean, Min, Max) |  
 |------------------------|---------------------------------------------------|  
@@ -341,23 +355,26 @@ Though the efficacy of the supplements has seen positive result in promoting too
 | **VC** x 2 | `r mean(VC20)`, `r range(VC20)` |  
 &nbsp;
 
-Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. The average length of tooth growth attained for each supplement type vs theoretical mean listed herein, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu$, than **VC** type which tooth length is fall short of hypothetical mean $\mu$.  
+Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. Refer to table-6 beneath, the average length of tooth growth attained for each supplement type vs theoretical mean listed, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu$, than **VC** type which tooth length is fall short of hypothetical mean $\mu$.  
 
-Thus far, we have relied on empirical evidence on our findings about the efficacy of the supplements on growth rate on tooth length, therefore a hypothesis test is mandatory to establish statistical evidence of 95% confidence level to substantiate our claims.  
+Though both supplement types, **OJ** and **VC**, have seen positive growth rate, their average tooth length appeared to differ in which **OJ's** greater than hypothetical mean $\mu$ whereas **VC's** lesser than the $\mu$, seemed to suggest **OJ** is more potent than **VC**.  
 &nbsp;
+
+$Table-6$  
 
 | Supplement | Average tooth length vs hypothetical mean $\mu$ `r round(mean(tg$len),4)` |  
 |------------|-------------------------------|  
 | **OJ** | `r round(mean(subset(tg,as.numeric(supp)==1)$len),4)` |  
 | **VC** | `r round(mean(subset(tg,as.numeric(supp)==2)$len),4)` |  
 &nbsp;
-Though both supplement types, **OJ** and **VC**, have seen positive growth rate, their average tooth length appeared to differ in which **OJ's** greater than hypothetical mean $\mu$ whereas **VC's** lesser than the $\mu$, seemed to suggest **OJ** is more potent than **VC**.  
+
+Thus far, we have relied on empirical evidence on our findings about the efficacy of the supplements on growth rate on tooth length, therefore a hypothesis test is mandatory to establish statistical evidence of 95% confidence level to substantiate our claims.  
 &nbsp;
 
 ### Bootstrapping ToothGrowth sampling dataset  
 &nbsp;
 
-R's ToothGrowth sampling dataset used in this course work is not Gaussian in its distribution, so a bootstrapping procedure will help it conform to the central limit theorem definition for subsequent statistical analysis. We will bootstrapped ToothGrowth dataset to 2000 sampling data samples. 
+R's ToothGrowth sampling dataset used in this course work is not Gaussian in its distribution, so a bootstrapping procedure will help it conform to the central limit theorem definition for subsequent statistical analysis. We will bootstrapped ToothGrowth dataset to 2000 sampling data samples.  
 
 Take note that ToothGrowth is a data table of 60 rows by 3 columns, the bootstrapping procedure will sample with replacement the 60 rows by rowid for each bootstrap sample, thus we will get differing permutation of rows for each data sample in the bootstrapped dataset without altering the underlying intrinsic data definition.  
 &nbsp;
@@ -426,8 +443,10 @@ print(h)
 
 &nbsp;
 
-| Statistics Estimates for $\bar{X}$ |
-|----------------------------|--------------------------------------------------|
+$Table-7$  
+
+| Statistics Estimates for $\bar{X}$ |  
+|----------------------------|--------------------------------------------------|  
 | $\mu_\bar{X} =$ `r round(Xmu,4)` | Mean of $\bar{X}$ |  
 | $\sigma_\bar{X} =$ `r round(Xsd,4)` | Standard deviation of $\bar{X}$ |  
 | $\sigma_\bar{X}^2 =$ `r round(Xvar,4)` | Variance of $\bar{X}$ |  
@@ -435,6 +454,8 @@ print(h)
 &nbsp;
 
 Comparison between bootstrapped sampling mean against average tooth length by supplement type.  
+
+$Table-8$  
 
 | Supplement | Bootstrapped sampling mean vs Average tooth length |  
 |------------|----------------------------------------------------|  
@@ -477,5 +498,5 @@ $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`
 
 $p.value =$ **`r round(p_val, 4)`** $>$ $\alpha$ $5\%$ level implying our hypothesis test failed to reject the **H~0~**, that is to say **H~0~** is accepted for our hypothetical claim that both supplement types are effective for tooth growth with 95% confidence. In addition, the confidence interval (`r round(CI_t, 4)`) from the test seem to be hugging closely around the theoretical mean $\mu$ `r round(mean(tg$len),4)` augmenting the assumption under **H~0~** is true, which mean the theoretical sample mean $\mu$ is true mean of the population. By virtue of this conclusion, we can deduce that our earlier conjecture about **OJ** is more potent than **VC** is also true.  
 &nbsp;
-
+&nbsp;
 

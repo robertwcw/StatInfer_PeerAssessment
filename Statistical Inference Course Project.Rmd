@@ -142,12 +142,16 @@ p_val <- pt(q = abs(t_val), df = B - 1, lower.tail = FALSE) * 2  #one-sided p-va
 
 Let's do a student's T-test to verify our claims; hypothesis test set up as follow:  
 **H~0~** : $\bar{X_\mu} = \mu$  
+
 **H~A~** : $\bar{X_\mu} \neq \mu$  
+
 $CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
+
 $t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X_\mu}} =$ `r round(t_val, 4)`  
+
 $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
 
-$p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~** , which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X_\mu}$ represents the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly wraps around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X_\mu}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X_\mu}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.
+$p.value =$ `r round(p_val, 4)` $> \alpha$ `r alpha*100`$\%$ level implies the hypothesis test failed to reject true **H~0~** , which is saying the true **H~0~** is accepted for our assumption was true that the sample mean $\bar{X_\mu}$ postulating the true mean of the population. Confidence interval $CI_t$ (lower = `r round(CI_t[1], 4)` & upper = `r round(CI_t[2], 4)`) tightly clasping around the theoretical mean $\mu$ indicates the sample estimates will occur very closely to the $\bar{X_\mu}$ between lower bound and upper bound $95\%$ of the time. In other words, the sample mean $\bar{X_\mu}$ is estimating what it was intended to measure. On the same note our claim that the sample variance was true for the population is correct.
 
 ### Sample Mean vs Theoretical Mean
 
@@ -327,7 +331,7 @@ for (j in c("OJ","VC")) {
 Though the efficacy of the supplements has seen positive result in promoting tooth growth for both **OJ** type and **VC** type as exhibited in the scatter plots in Figure-8, red curve on the left and blue curve on the right depicting the average growth rate for **OJ** supplement and **VC** supplement respectively. Note that average growth rate for **OJ** is more rapid at lower than mean dosage `r mean(tg$dose)` (yellow vertical line) and tapered at above mean dosage, while average growth rate for **VC** is more uniform across the recommended dosage. Referring to the table attached below, overall effectiveness of **OJ** is better in encouraging tooth growth at lower dosage (0.5 ~ 1 dose) compare to **VC** which is more potent at higher dosage (2 doses).  
 &nbsp;
 
-| Supplement x Dosage | Length (Mean, Min, Max) |  
+| Supplement x Dosage | Tooth Length (Mean, Min, Max) |  
 |------------------------|---------------------------------------------------|  
 | **OJ** x $\frac{1}{2}$ | `r mean(OJ05)`, `r range(OJ05)` |  
 | **VC** x $\frac{1}{2}$ | `r mean(VC05)`, `r range(VC05)` |  
@@ -339,13 +343,15 @@ Though the efficacy of the supplements has seen positive result in promoting too
 
 Generally, we know that both supplements are effective for tooth growth, albeit varied rate at differing dosage. The average length of tooth growth attained for each supplement type vs theoretical mean listed herein, **OJ** type spurs longer average tooth length than the hypothetical mean $\mu$, than **VC** type which tooth length is fall short of hypothetical mean $\mu$.  
 
-Thus far, we have relied on empirical evidence on our findings about the efficacy of the supplements on growth rate on tooth length, therefore hypothesis testing is mandatory to established statistical evidence of 95% confidence level to substantiate our conclusions.  
+Thus far, we have relied on empirical evidence on our findings about the efficacy of the supplements on growth rate on tooth length, therefore a hypothesis test is mandatory to establish statistical evidence of 95% confidence level to substantiate our claims.  
 &nbsp;
 
-| Supplement | Average Length vs hypothetical mean $\mu$ = `r round(mean(tg$len),4)` |  
+| Supplement | Average tooth length vs hypothetical mean $\mu$ `r round(mean(tg$len),4)` |  
 |------------|-------------------------------|  
-| **OJ** | `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
-| **VC** | `r round(mean(subset(tg, as.numeric(supp) == 2)$len),4)` |  
+| **OJ** | `r round(mean(subset(tg,as.numeric(supp)==1)$len),4)` |  
+| **VC** | `r round(mean(subset(tg,as.numeric(supp)==2)$len),4)` |  
+&nbsp;
+Though both supplement types, **OJ** and **VC**, have seen positive growth rate, their average tooth length appeared to differ in which **OJ's** greater than hypothetical mean $\mu$ whereas **VC's** lesser than the $\mu$, seemed to suggest **OJ** is more potent than **VC**.  
 &nbsp;
 
 ### Bootstrapping ToothGrowth sampling dataset  
@@ -422,18 +428,29 @@ print(h)
 
 | Statistics Estimates for $\bar{X}$ |
 |----------------------------|--------------------------------------------------|
-| $\bar{X_\mu} =$ `r round(Xmu,4)` | Mean of $\bar{X}$ |  
+| $\mu_\bar{X} =$ `r round(Xmu,4)` | Mean of $\bar{X}$ |  
 | $\sigma_\bar{X} =$ `r round(Xsd,4)` | Standard deviation of $\bar{X}$ |  
 | $\sigma_\bar{X}^2 =$ `r round(Xvar,4)` | Variance of $\bar{X}$ |  
 | $SE_\bar{X} =$ `r round(Xse,4)` | Standard Error of $\bar{X}$ |  
+&nbsp;
+
+Comparison between bootstrapped sampling mean against average tooth length by supplement type.  
 
 | Supplement | Bootstrapped sampling mean vs Average tooth length |  
 |------------|----------------------------------------------------|  
 | **OJ** | `r round(XOJmu,4)` $vs$ `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
 | **VC** | `r round(XVCmu,4)` $vs$ `r round(mean(subset(tg, as.numeric(supp) == 1)$len),4)` |  
 &nbsp;
+Take note the bootstrapped sampling means for both supplement types are equivalent to their respective average tooth length, implying the supplements may be effective to promote tooth growth.  
 
 ### Hypothesis Test  
+&nbsp;
+
+We conduct a student's T-test to verify our hypothetical claim: supplements will encourage tooth growth. Hypothesis test set up as follow:  
+
+**H~0~** : $\mu_\bar{X} = \mu$ $\{$Efficacy of the supplements is TRUE$\}$  
+
+**H~A~** : $\mu_\bar{X} \neq \mu$ $\{$Efficacy of the supplements is NOT TRUE$\}$  
 &nbsp;
 
 ```{r t.test.tg, echo=TRUE}
@@ -451,17 +468,14 @@ p_val <- pt(q = abs(t_val), df = B - 1, lower.tail = FALSE) * 2  #one-sided p-va
 ```
 &nbsp;
 
-We will conduct a student's T-test to verify our claims; hypothesis test set up as follow:  
-**H~0~** : $\bar{X_\mu} = \mu$  
-**H~A~** : $\bar{X_\mu} \neq \mu$  
 $CI_t = \bar{X_\mu} \pm t_{(1-\frac{\alpha}{2},B-1)}\sqrt\frac{\sigma_\bar{X}^2}{B} =$ `r round(CI_t, 4)`  
+
 $t.value = \frac{\bar{X_\mu}-\mu}{SE_\bar{X}} =$ `r round(t_val, 4)`  
+
 $p.value = pt(q=abs(t.value),df=B-1,lower.tail=F)*2 =$ `r round(p_val, 4)`  
 &nbsp;
 
-
-
-
-
+$p.value =$ **`r round(p_val, 4)`** $>$ $\alpha$ $5\%$ level implying our hypothesis test failed to reject the **H~0~**, that is to say **H~0~** is accepted for our hypothetical claim that both supplement types are effective for tooth growth with 95% confidence. In addition, the confidence interval (`r round(CI_t, 4)`) from the test seem to be hugging closely around the theoretical mean $\mu$ `r round(mean(tg$len),4)` augmenting the assumption under **H~0~** is true, which mean the theoretical sample mean $\mu$ is true mean of the population. By virtue of this conclusion, we can deduce that our earlier conjecture about **OJ** is more potent than **VC** is also true.  
+&nbsp;
 
 

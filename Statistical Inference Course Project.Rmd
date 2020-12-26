@@ -481,6 +481,7 @@ We may draw an initial conjecture that ToothGrowth sample dataset is a valid rep
 
 ### Hypothesis Test  
 &nbsp;
+
 We conduct a student's T-test to verify our hypothetical claim: supplements will encourage tooth growth.  
 Hypothesis test set up as follow:  
 
